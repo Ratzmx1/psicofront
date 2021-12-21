@@ -13,12 +13,10 @@ class HorasDisponibles {
 
     factory HorasDisponibles.fromJson(String str) => HorasDisponibles.fromMap(json.decode(str));
 
-
     factory HorasDisponibles.fromMap(Map<String, dynamic> json) => HorasDisponibles(
         horas: List<Hora>.from(json["horas"].map((x) => Hora.fromMap(x))),
     );
 
-    
 }
 
 class Hora {

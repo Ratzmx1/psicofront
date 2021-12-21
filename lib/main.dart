@@ -45,8 +45,8 @@ class ProviderHttp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => HttpProvider()),
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => HttpProvider(), lazy: true,),
+        ChangeNotifierProvider(create: (_) => LoginProvider(), lazy: true,),
       ],
       child: MyApp(),
     );

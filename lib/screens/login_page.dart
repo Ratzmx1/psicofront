@@ -26,20 +26,16 @@ class _LoginScreenState extends State<LoginScreen> {
       child: FutureBuilder(
         builder: _loginWidget,
         future: loginProvider.loadUser(),
-        initialData: false,
       ),
     ));
   }
 
-  Widget _loginWidget(BuildContext context, AsyncSnapshot<bool> snapshot) {
+  Widget _loginWidget(BuildContext context, AsyncSnapshot<LoginData?> snapshot) {
     if (!snapshot.hasData) {
       const Center(child: CircularProgressIndicator());
     }
-    if (snapshot.data == null) {
-      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-        Navigator.pushReplacementNamed(context, "take");
-      });
-    } else if (snapshot.data!) {
+
+     if (snapshot.data?.token != null) {
       SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
         Navigator.pushReplacementNamed(context, "take");
       });
@@ -109,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           await httpProvider.loginUser(formRut, formPass);
                       if (data != null) {
                         await loginProvider.saveData(data);
-                        Navigator.pushNamed(context, "take");
+                        Navigator.pushReplacementNamed(context, "take");
                       } else {
                         print("Wrong credentials");
                       }

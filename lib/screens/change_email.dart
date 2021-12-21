@@ -107,8 +107,13 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
             return;
           }
 
+          final loginData = await loginProvider.loadUser();
+          if (loginData == null) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "login", (route) => false);
+          }
           final user =
-              await httpProvider.updateEmail(inputEmail, loginProvider.token);
+              await httpProvider.updateEmail(inputEmail);
           Alert(
             context: context,
             type: AlertType.success,

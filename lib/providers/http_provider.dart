@@ -10,14 +10,20 @@ import 'package:psicofront/models/hora_detalle.dart';
 import 'package:psicofront/models/horas_disponibles.dart';
 import 'package:psicofront/models/login_data.dart';
 import 'package:psicofront/models/mi_historial.dart';
+import 'package:psicofront/providers/login_provider.dart';
 
 class HttpProvider extends ChangeNotifier {
   final Map<String, HoraDetalle> detalles = {};
 
-  final _baseURL = 'http://1225-181-162-250-201.ngrok.io';
+  final _baseURL = 'http://b8c0-181-160-133-108.ngrok.io';
 
-  Future<HorasDisponibles> getHorasDisponibles(String token) async {
-    final response = await _getJsonDataDIO("/hour/disponibles", token);
+  Future<HorasDisponibles?> getHorasDisponibles() async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
+    if(data?.token == null){
+      return null;
+    }
+    final response = await _getJsonDataDIO("/hour/disponibles", data!.token);
     final casted = HorasDisponibles.fromJson(response!);
     // final casted = HorasDisponibles.fromJson("{horas:[]}");
 
@@ -40,9 +46,14 @@ class HttpProvider extends ChangeNotifier {
     }
   }
 
-  Future<HoraDetalle> getDetail(String id, String token) async {
+  Future<HoraDetalle?> getDetail(String id) async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
     if (detalles[id] == null) {
-      final response = await _getJsonDataDIO("/hour/hora/$id", token);
+      if(data?.token == null){
+        return null;
+      }
+      final response = await _getJsonDataDIO("/hour/hora/$id", data!.token);
       final result = HoraDetalle.fromJson(response!);
       return result;
     } else {
@@ -51,16 +62,28 @@ class HttpProvider extends ChangeNotifier {
     }
   }
 
-  Future<HoraDetalle> scheduleHour(String id, String token) async {
+  Future<HoraDetalle?> scheduleHour(String id) async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
+    if(data?.token == null){
+      return null;
+    }
     final response =
-        await _postJsonDataWithTokenDIO("/hour/solicitar", {"id": id}, token);
+  
+        await _postJsonDataWithTokenDIO("/hour/solicitar", {"id": id}, data!.token);
     final result = HoraDetalle.fromJson(response!);
     return result;
   }
 
-  Future<void> cancelHour(String id, String token) async {
+  Future<void> cancelHour(String id) async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
+     if(data?.token == null){
+      return ;
+    }
     final response =
-        await _patchJsonDataDIO("/hour/cancelar", {"id": id}, token);
+   
+        await _patchJsonDataDIO("/hour/cancelar", {"id": id}, data!.token);
   }
 
   Future<Map<String, dynamic>?> updatePass(
@@ -90,10 +113,15 @@ class HttpProvider extends ChangeNotifier {
     }
   }
 
-  Future<Usuario?> updateEmail(String newEmail, String token) async {
+  Future<Usuario?> updateEmail(String newEmail) async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
+     if(data?.token == null){
+      return null;
+    }
     try {
       final response =
-          await _patchJsonDataDIO("/user/email", {"newEmail": newEmail}, token);
+          await _patchJsonDataDIO("/user/email", {"newEmail": newEmail}, data!.token);
       final user = Usuario.fromMap(jsonDecode(response!)['usuario']);
       return user;
     } catch (e) {
@@ -101,8 +129,13 @@ class HttpProvider extends ChangeNotifier {
     }
   }
 
-  Future<MiHistorial> getHistorial(String token) async {
-    final response = await _getJsonDataDIO("/hour/historial", token);
+  Future<MiHistorial?> getHistorial() async {
+    LoginProvider providerLogin = LoginProvider();
+    final data = await providerLogin.loadUser();
+    if(data?.token == null){
+      return null;
+    }
+    final response = await _getJsonDataDIO("/hour/historial", data!.token);
     final casted = MiHistorial.fromJson(response!);
 
     return casted;

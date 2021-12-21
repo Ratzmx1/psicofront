@@ -112,8 +112,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ElevatedButton(
                       child: const Text("Aceptar"),
                       onPressed: () async {
+                        final loginData = await loginprovider.loadUser();
+                        if (loginData == null) {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, "login", (route) => false);
+                        }
                         final res = await httpProvider.updatePass(
-                            oldPass, newPass, loginprovider.token);
+                            oldPass, newPass, loginData!.token);
                         if (!res!['status']) {
                           showDialog(
                             context: context,

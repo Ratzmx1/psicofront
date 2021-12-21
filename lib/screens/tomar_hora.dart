@@ -25,48 +25,48 @@ class TomarHoraScreen extends StatelessWidget {
         ),
         bottomNavigationBar: const BottomNavigator(1),
         body: FutureBuilder(
-          builder: CallendarBuilder,
-          future: httpProvider.getHorasDisponibles(loginData.token),
+          builder: _calendarBuilder,
+          future: httpProvider.getHorasDisponibles(),
         ));
   }
 
   // ignore: non_constant_identifier_names
-  Widget CallendarBuilder(
-      BuildContext context, AsyncSnapshot<HorasDisponibles> snapshot) {
-    if (snapshot.hasData) {
-      return SfCalendar(
-        view: CalendarView.month,
-        timeZone: 'Pacific SA Standard Time',
-        dataSource: MeetingDataSource(_getDataSource(snapshot.data!)),
-        monthViewSettings: const MonthViewSettings(
-            appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
-            showAgenda: true),
-        appointmentBuilder: (context, a) {
-          final event2 = a.appointments.cast<Meeting>();
-          final event = event2.first;
-          final hourText = DateFormat('kk:mm').format(event.from) +
-              " - " +
-              DateFormat('kk:mm').format(event.to);
-          return Card(
-            color: event.background,
-            child: ListTile(
-              title: Text(event.eventName),
-              leading: Text(hourText),
-              onTap: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return _ModalContent(
-                          hourText: hourText, date: event.from, id: event.id);
-                    });
-              },
-            ),
-          );
-        },
+  Widget _calendarBuilder(
+      BuildContext context, AsyncSnapshot<HorasDisponibles?> snapshot) {
+    if (!snapshot.hasData) {
+      return Center(
+        child: CircularProgressIndicator(),
       );
     }
-    return Center(
-      child: CircularProgressIndicator(),
+    return SfCalendar(
+      view: CalendarView.month,
+      timeZone: 'Pacific SA Standard Time',
+      dataSource: MeetingDataSource(_getDataSource(snapshot.data!)),
+      monthViewSettings: const MonthViewSettings(
+          appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+          showAgenda: true),
+      appointmentBuilder: (context, appointment) {
+        final event2 = appointment.appointments.cast<Meeting>();
+        final event = event2.first;
+        final hourText = DateFormat('kk:mm').format(event.from) +
+            " - " +
+            DateFormat('kk:mm').format(event.to);
+        return Card(
+          color: event.background,
+          child: ListTile(
+            title: Text(event.eventName),
+            leading: Text(hourText),
+            onTap: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return _ModalContent(
+                        hourText: hourText, date: event.from, id: event.id);
+                  });
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -126,7 +126,7 @@ class _ModalContent extends StatelessWidget {
         Expanded(child: SizedBox()),
         ElevatedButton(
             onPressed: () async {
-              await httpProvider.scheduleHour(id, loginData.token);
+              await httpProvider.scheduleHour(id);
               Navigator.pushNamed(context, "hours");
             },
             child: Text("Solicitar hora")),
@@ -172,6 +172,7 @@ class MeetingDataSource extends CalendarDataSource {
 class Meeting {
   Meeting(this.id, this.eventName, this.from, this.to, this.background,
       this.isAllDay);
+
   String id;
   String eventName;
   DateTime from;

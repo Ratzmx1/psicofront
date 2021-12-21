@@ -13,6 +13,10 @@ class MisHorasScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<HttpProvider>(context);
     final loginData = Provider.of<LoginProvider>(context);
+    
+  
+      
+    
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -22,9 +26,9 @@ class MisHorasScreen extends StatelessWidget {
         ),
         bottomNavigationBar: const BottomNavigator(0),
         body: FutureBuilder(
-          future: provider.getHistorial(loginData.token),
-          builder: (BuildContext context, AsyncSnapshot<MiHistorial> snapshot) {
-            if (snapshot.hasData) {
+          future: provider.getHistorial(),
+          builder: (BuildContext context, AsyncSnapshot<MiHistorial?> snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
               final data = snapshot.data!.horas;
 
               return Padding(
@@ -55,7 +59,7 @@ class MisHorasScreen extends StatelessWidget {
                                 height: 500,
                                 child: FutureBuilder(
                                   future:
-                                      provider.getDetail(id, loginData.token),
+                                      provider.getDetail(id),
                                   builder: _futureBuilder,
                                 ),
                               );
@@ -72,7 +76,7 @@ class MisHorasScreen extends StatelessWidget {
   }
 
   Widget _futureBuilder(
-      BuildContext context, AsyncSnapshot<HoraDetalle> snapshot) {
+      BuildContext context, AsyncSnapshot<HoraDetalle?> snapshot) {
     final provider = Provider.of<HttpProvider>(context);
     final loginData = Provider.of<LoginProvider>(context);
 
@@ -136,7 +140,7 @@ class MisHorasScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
               onPressed: () async {
-                await provider.cancelHour(data.id, loginData.token);
+                await provider.cancelHour(data.id);
                 Navigator.pushReplacementNamed(context, "hours");
               },
             ),
