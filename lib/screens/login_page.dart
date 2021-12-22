@@ -30,12 +30,13 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  Widget _loginWidget(BuildContext context, AsyncSnapshot<LoginData?> snapshot) {
+  Widget _loginWidget(
+      BuildContext context, AsyncSnapshot<LoginData?> snapshot) {
     if (!snapshot.hasData) {
       const Center(child: CircularProgressIndicator());
     }
 
-     if (snapshot.data?.token != null) {
+    if (snapshot.data?.token != null) {
       SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
         Navigator.pushReplacementNamed(context, "take");
       });
@@ -104,10 +105,50 @@ class _LoginScreenState extends State<LoginScreen> {
                       LoginData? data =
                           await httpProvider.loginUser(formRut, formPass);
                       if (data != null) {
-                        await loginProvider.saveData(data);
-                        Navigator.pushReplacementNamed(context, "take");
+                        if (data.usuario.tipo == "CLIENTE") {
+                          await loginProvider.saveData(data);
+                          Navigator.pushReplacementNamed(context, "take");
+                        } else {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text('Usuario no autorizado'),
+                                  actions: <Widget>[
+                                    ElevatedButton(
+                                      child: const Text('Ok'),
+                                      onPressed: () {
+                                        Navigator.pushReplacementNamed(
+                                            context, "login");
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+
+                          Navigator.pushReplacementNamed(context, "login");
+                        }
                       } else {
-                        print("Wrong credentials");
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: const Text(
+                                    'Usuario o contraseña incorrectos'),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    child: const Text('Ok'),
+                                    onPressed: () {
+                                      Navigator.pushReplacementNamed(
+                                          context, "login");
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                        Navigator.pushReplacementNamed(context, "login");
                       }
                     },
                     child: const Padding(

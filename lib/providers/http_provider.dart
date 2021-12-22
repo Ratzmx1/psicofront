@@ -15,7 +15,7 @@ import 'package:psicofront/providers/login_provider.dart';
 class HttpProvider extends ChangeNotifier {
   final Map<String, HoraDetalle> detalles = {};
 
-  final _baseURL = 'http://b8c0-181-160-133-108.ngrok.io';
+  final _baseURL = 'http://ea03-181-162-233-14.ngrok.io';
 
   Future<HorasDisponibles?> getHorasDisponibles() async {
     LoginProvider providerLogin = LoginProvider();

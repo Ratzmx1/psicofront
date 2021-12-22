@@ -51,20 +51,18 @@ class TomarHoraScreen extends StatelessWidget {
         final hourText = DateFormat('kk:mm').format(event.from) +
             " - " +
             DateFormat('kk:mm').format(event.to);
-        return Card(
-          color: event.background,
-          child: ListTile(
-            title: Text(event.eventName),
-            leading: Text(hourText),
-            onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return _ModalContent(
-                        hourText: hourText, date: event.from, id: event.id);
-                  });
-            },
-          ),
+        return ListTile(
+          tileColor: event.background,
+          title: Text(event.eventName),
+          leading: Text(hourText),
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return _ModalContent(
+                      hourText: hourText, date: event.from, id: event.id);
+                });
+          },
         );
       },
     );
@@ -78,7 +76,7 @@ class TomarHoraScreen extends StatelessWidget {
       final DateTime startTime = element.fecha;
       final DateTime endTime = startTime.add(const Duration(hours: 1));
       meetings.add(Meeting(element.id, 'Disponible', startTime, endTime,
-          getRandomColor(index), false));
+          getRandomColor(), false));
       index++;
     });
 
@@ -181,9 +179,9 @@ class Meeting {
   bool isAllDay;
 }
 
-Color getRandomColor(int index) {
-  final start = Random(DateTime.now().microsecondsSinceEpoch).nextInt(4);
-
+Color getRandomColor() {
+  final start = Random(DateTime.now().microsecondsSinceEpoch).nextInt(5);
+  final index = Random(DateTime.now().microsecondsSinceEpoch).nextInt(7);
   final colors = [
     Colors.lightBlue.shade300,
     Colors.green.shade200,
@@ -191,5 +189,5 @@ Color getRandomColor(int index) {
     Colors.deepPurple.shade200,
     Colors.teal.shade200
   ];
-  return colors[(index + start) % 5];
+  return colors[(index * start) % 5];
 }

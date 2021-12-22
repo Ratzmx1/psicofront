@@ -39,8 +39,8 @@ class MisHorasScreen extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     final date = data[index].fecha;
                     return ListTile(
-                      title: Text(DateFormat("d/M/yy").format(date)),
-                      subtitle: Text(DateFormat("h:m").format(date)),
+                      title: Text(DateFormat("dd/MM/yyyy").format(date)),
+                      subtitle: Text(DateFormat("HH:mm").format(date)),
                       trailing: data[index].pagado
                           ? const Icon(
                               Icons.check_circle,
@@ -92,7 +92,7 @@ class MisHorasScreen extends StatelessWidget {
           const SizedBox(height: 30),
           Center(
             child: Text(
-              DateFormat("d/M/yy").format(data.fecha),
+              DateFormat("dd/MM/yyyy").format(data.fecha),
               style: TextStyle(fontSize: 40.0),
             ),
           ),
@@ -101,7 +101,7 @@ class MisHorasScreen extends StatelessWidget {
           ),
           Center(
             child: Text(
-              DateFormat("h:m").format(data.fecha),
+              DateFormat("HH:mm").format(data.fecha),
               style: TextStyle(fontSize: 30.0),
             ),
           ),

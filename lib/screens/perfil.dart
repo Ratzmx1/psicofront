@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -134,4 +136,17 @@ class _PerfilScreenState extends State<PerfilScreen> {
           }),
     );
   }
+}
+
+Color getRandomColor(int index) {
+  final start = Random(DateTime.now().microsecondsSinceEpoch).nextInt(4);
+
+  final colors = [
+    Colors.lightBlue.shade300,
+    Colors.green.shade200,
+    Colors.blue.shade200,
+    Colors.deepPurple.shade200,
+    Colors.teal.shade200
+  ];
+  return colors[(index + start) % 5];
 }
